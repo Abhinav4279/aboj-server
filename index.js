@@ -3,6 +3,7 @@ const cors = require("cors");
 
 const { generateFile } = require("./generateFile");
 const { executeCpp } = require("./executeCpp");
+const { executeAsm } = require("./executeAsm")
 
 const app = express();
 
@@ -21,7 +22,15 @@ app.post("/run", async (req, res) => {
 
   try {
     const filepath = await generateFile(language, code);
-    const output = await executeCpp(filepath);
+
+    let output;
+    switch(language) {
+      case 'cpp':
+        output = await executeCpp(filepath);
+        break;
+      case 'asm':
+        output = await executeAsm(filepath);
+    }
 
     return res.json({ filepath, output });
   } catch (err) {
