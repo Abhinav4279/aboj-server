@@ -27,3 +27,4 @@ codes/*
 outputs/*
 !outputs/.gitkeep
 
+package-lock.json
