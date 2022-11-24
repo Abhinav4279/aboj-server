@@ -1,9 +1,21 @@
 const express = require("express");
 const cors = require("cors");
+const mongoose = require('mongoose')
 
 const { generateFile } = require("./generateFile");
 const { executeCpp } = require("./executeCpp");
 const { executeAsm } = require("./executeAsm")
+
+mongoose.connect("mongodb://localhost/compilerapp", {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+}, (err) => {
+  if(err) {
+    console.error(err);
+    process.exit(1);
+  }
+  console.log("MongoDB connected");
+}); 
 
 const app = express();
 
