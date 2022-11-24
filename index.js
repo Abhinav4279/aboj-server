@@ -3,9 +3,8 @@ const cors = require("cors");
 const mongoose = require('mongoose')
 
 const { generateFile } = require("./generateFile");
-const { executeCpp } = require("./executeCpp");
-const { executeAsm } = require("./executeAsm")
 const Job = require('./models/Job');
+const { addJobToQueue } = require('./jobQueue')
 
 mongoose.connect("mongodb://localhost/compilerapp", {
   useNewUrlParser: true,
@@ -59,36 +58,12 @@ app.post("/run", async (req, res) => {
     
     job = await new Job({language, filepath}).save()
     const jobId = job["_id"];
+    addJobToQueue(jobId)
     console.log(job)
 
     res.status(201).json({success: true, jobId});
-
-    let output;
-
-    job["startedAt"] = new Date();
-    switch(language) {
-      case 'cpp':
-        output = await executeCpp(filepath);
-        break;
-      case 'asm':
-        output = await executeAsm(filepath);
-    }
-
-    job["completedAt"] = new Date();
-    job["status"] = "success";
-    job["output"] = output;
-
-    await job.save();
-
-    console.log({file, output});
-    // return res.json({ filepath, output });
-  } catch (err) {
-    job['completedAt'] = new Date();
-    job['status'] = 'error';
-    job['output'] = JSON.stringify(err);
-    await job.save();
-    console.log(err);
-    // res.status(500).json({err});
+  } catch(err) {
+    return res.status(500).json({success: false, err: JSON.stringify(err)})
   }
 });
 
