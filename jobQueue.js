@@ -15,7 +15,7 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
   if (job === undefined) {
     throw Error("Job not found");
   }
-  console.log('Job fetched', job);
+  // console.log('Job fetched', job);
 
   try {
     job["startedAt"] = new Date();
@@ -31,6 +31,7 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     job["status"] = "success";
     job["output"] = output;
 
+    // console.log(output);
     await job.save();
   } catch (err) {
     job['completedAt'] = new Date();
