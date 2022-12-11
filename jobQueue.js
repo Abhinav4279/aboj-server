@@ -34,9 +34,15 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     // console.log(output);
     await job.save();
   } catch (err) {
+    const { error } = err;
+    // console.log(error.code)
     job['completedAt'] = new Date();
     job['status'] = 'error';
     job['output'] = JSON.stringify(err);
+
+    if(error.code === 124)
+      job['status'] = 'timeout';
+
     await job.save();
   }
 
