@@ -45,7 +45,6 @@ app.get('/status', async(req, res) => {
 
 app.post("/run", async (req, res) => {
   const { language = "cpp", code } = req.body;
-
   console.log(language, "Length:", code.length);
 
   if (code === undefined) {
@@ -59,12 +58,37 @@ app.post("/run", async (req, res) => {
     job = await new Job({language, filepath}).save()
     const jobId = job["_id"];
     addJobToQueue(jobId)
-    // console.log(job)
 
     res.status(201).json({success: true, jobId});
   } catch(err) {
     return res.status(500).json({success: false, err: JSON.stringify(err)})
   }
+});
+
+app.post('/submit', async (req, res) => {
+  const { language = "cpp", code } = req.body;
+  console.log(language, "Length:", code.length);
+
+  //------TODO: modularize from /run
+  if (code === undefined) {
+    return res.status(400).json({ success: false, error: "Empty code body!" });
+  }
+
+  let job;
+  try {
+    const filepath = await generateFile(language, code);
+    
+    job = await new Job({language, filepath}).save()
+    const jobId = job["_id"];
+    addJobToQueue(jobId)
+
+    res.status(201).json({success: true, jobId});
+  } catch(err) {
+    return res.status(500).json({success: false, err: JSON.stringify(err)})
+  }
+  //-----
+
+
 });
 
 app.listen(5000, () => {

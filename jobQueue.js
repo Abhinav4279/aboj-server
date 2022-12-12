@@ -7,7 +7,6 @@ const NUM_WORKERS = 5;
 const Job = require('./models/Job');
 
 jobQueue.process(NUM_WORKERS, async ({ data }) => {
-  console.log(data);
   const { id: jobId } = data;
   //query db
   const job = await Job.findById(jobId);
@@ -15,7 +14,6 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
   if (job === undefined) {
     throw Error("Job not found");
   }
-  // console.log('Job fetched', job);
 
   try {
     job["startedAt"] = new Date();
@@ -31,11 +29,9 @@ jobQueue.process(NUM_WORKERS, async ({ data }) => {
     job["status"] = "success";
     job["output"] = output;
 
-    // console.log(output);
     await job.save();
   } catch (err) {
     const { error } = err;
-    // console.log(error.code)
     job['completedAt'] = new Date();
     job['status'] = 'error';
     job['output'] = JSON.stringify(err);
