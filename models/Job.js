@@ -14,6 +14,9 @@ const JobSchema = mongoose.Schema({
     type: Date,
     default: Date.now
   },
+  startedAt: {
+    type: Date
+  },
   completedAt: {
     type: Date
   },
@@ -23,7 +26,7 @@ const JobSchema = mongoose.Schema({
   status: {
     type: String, 
     default: "pending",
-    enum: ["pending", "success", "error"]
+    enum: ["pending", "success", "error", "timeout"]
   }
 });
 

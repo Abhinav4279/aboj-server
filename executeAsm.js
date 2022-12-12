@@ -16,7 +16,7 @@ const executeAsm = (filepath) => {
 
   return new Promise((resolve, reject) => {
     exec(
-      `timeout 10s nasm -f elf64 ${filepath} && ld -s -o ${outPath} ${codePath} && cd ${outputPath} && ./${jobId}.out`,
+      `timeout 8s nasm -f elf64 ${filepath} && timeout 8s ld -s -o ${outPath} ${codePath} && cd ${outputPath} && timeout 8s ./${jobId}.out`,
       (error, stdout, stderr) => {
         error && reject({ error, stderr });
         stderr && reject(stderr);

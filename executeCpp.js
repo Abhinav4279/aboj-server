@@ -13,9 +13,9 @@ const executeCpp = (filepath) => {
   const outPath = path.join(outputPath, `${jobId}.out`);
 
   return new Promise((resolve, reject) => {
-    //TODO: set job status 'timeout' after 10s in mongo
+    //TODO: set job status 'timeout' after 8s in mongo
     exec(
-      `timeout 10s g++ ${filepath} -o ${outPath} && cd ${outputPath} && ./${jobId}.out`,
+      `timeout 8s g++ ${filepath} -o ${outPath} && cd ${outputPath} && timeout 8s ./${jobId}.out`,
       (error, stdout, stderr) => {
         error && reject({ error, stderr });
         stderr && reject(stderr);
